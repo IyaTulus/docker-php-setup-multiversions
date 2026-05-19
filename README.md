@@ -1,7 +1,4 @@
-docker compose -f docker-compose.yml up -d --build
-docker compose -f docker-compose.yml up -d --build php81
-docker compose exec php74 bash
-/# PHP Multi-version Docker — Profesional
+# PHP Multi-version Docker — Profesional
 
 Ringkasan
 --------
@@ -139,64 +136,68 @@ Kontak
 ------
 Untuk pertanyaan, Anda dapat membuka `issue` di repository ini.
 
+## Tutorial: membuat project di `projects/` dan mengaksesnya
 
+Langkah singkat agar Anda dapat menaruh project di folder `projects/` dan mengaksesnya melalui salah satu container PHP (contoh: PHP 8.2 di port 8082).
+
+1) Buat folder `projects/` dan struktur project sederhana (di host, PowerShell/CMD):
+
+```powershell
+# dari root repo
+mkdir projects
+mkdir -p projects\myproject\public
+```
+
+2) Buat file `index.php` sederhana di `projects/myproject/public/index.php`:
+
+Isi contoh (`projects/myproject/public/index.php`):
+```php
+<?php
+echo "Halo dari myproject — PHP " . phpversion();
+```
+
+3) Jalankan container (jika belum):
+```powershell
+docker compose -f docker-compose.yml up -d --build
+```
+
+4) Akses project lewat browser:
+```
+http://localhost:8082/myproject/public/
+```
+Catatan: port `8082` merujuk ke service `php82`. Ganti port sesuai service yang ingin Anda gunakan (8056, 8074, 8082, 8084, 8085).
+
+Opsi: membuat project via Composer (contoh Laravel)
+- Jika ingin membuat project Composer (mis. Laravel) gunakan Composer yang terpasang di image. Contoh membuat project Laravel di `projects/laravel-sample` menggunakan service `php82`:
+
+```powershell
+# jalankan composer create-project dari container; hasil akan ditulis ke projects/ via volume
+docker compose exec php82 bash -lc "composer create-project --prefer-dist laravel/laravel /var/www/html/laravel-sample"
+
+# (opsional) atur ownership bila muncul error permission
+docker compose exec php82 bash -lc "chown -R www-data:www-data /var/www/html/laravel-sample"
+```
+
+Lalu akses:
+```
+http://localhost:8082/laravel-sample/public/
+```
+
+Catatan penting:
+- File yang dibuat di container akan muncul di folder `projects/` di host karena volume mount. Periksa hak akses/ownership jika ada error.
+- Jangan commit `projects/` ke repo publik — gunakan `.gitignore` seperti contoh:
+```
+/projects/
+/vendor/
+/.env
 /node_modules/
 /.idea/
 /.vscode/
 .DS_Store
 ```
 
-Yang sebaiknya tetap di-commit:
-- `composer.json` / `composer.lock` untuk contoh proyek yang ingin disertakan
-- `.env.example` sebagai template konfigurasi (jangan commit secret nyata)
-- Contoh aplikasi kecil di folder `sample/` (opsional)
+Dengan langkah di atas Anda bisa menaruh project apa pun ke `projects/` dan mengaksesnya melalui service PHP yang sesuai.
 
-## Menambah versi PHP baru
-
-1. Buat folder `php/<version>/` (mis. `php/81/`) dan tambahkan `Dockerfile` serta `index.php`.
-   - Salin `php/<version>/Dockerfile` yang ada lalu ubah base image `FROM php:<version>-apache` sesuai versi.
-2. Tambahkan service di `docker-compose.yml`:
-
-```yaml
-  php81:
-    build:
-      context: .
-      dockerfile: php/81/Dockerfile
-    container_name: php81
-    ports:
-      - "8081:80"
-    volumes:
-      - ./projects:/var/www/html
-      - ./php/81/index.php:/var/www/html/index.php:ro
-      - ./php/81/php.ini:/usr/local/etc/php/php.ini:ro
-```
-
-3. Rebuild dan jalankan service baru:
-
-```powershell
-docker compose -f docker-compose.yml up -d --build php81
-```
-
-## Menambah database (MySQL) atau Redis
-
-Contoh service `docker-compose` yang bisa ditambahkan ke `docker-compose.yml`:
-
-Contoh MySQL 8:
-
-```yaml
-  db:
-    image: mysql:8.0
-    container_name: mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: appdb
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: secret
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
 
 volumes:
   db_data:
