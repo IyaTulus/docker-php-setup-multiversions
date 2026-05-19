@@ -1,0 +1,68 @@
+services:
+  php56:
+    build:
+      context: .
+      dockerfile: php/56/Dockerfile
+    container_name: php56
+    restart: unless-stopped
+    ports:
+      - "8056:80"
+    volumes:
+      - ./projects:/var/www/html
+      - ./php/56/index.php:/var/www/html/index.php:ro
+      - ./php/56/php.ini:/usr/local/etc/php/php.ini:ro
+
+  php74:
+    build:
+      context: .
+      dockerfile: php/74/Dockerfile
+    container_name: php74
+    restart: unless-stopped
+    ports:
+      - "8074:80"
+    volumes:
+      - ./projects:/var/www/html
+      - ./php/74/index.php:/var/www/html/index.php:ro
+      - ./php/74/php.ini:/usr/local/etc/php/php.ini:ro
+
+  php82:
+    build:
+      context: .
+      dockerfile: php/82/Dockerfile
+    container_name: php82
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - ./projects:/var/www/html
+      - ./php/82/index.php:/var/www/html/index.php:ro
+      - ./php/82/php.ini:/usr/local/etc/php/php.ini:ro
+
+  php84:
+    build:
+      context: .
+      dockerfile: php/84/Dockerfile
+    container_name: php84
+    restart: unless-stopped
+    ports:
+      - "8084:80"
+    volumes:
+      - ./projects:/var/www/html
+      - ./php/84/index.php:/var/www/html/index.php:ro
+      - ./php/84/php.ini:/usr/local/etc/php/php.ini:ro
+  
+  php85:
+    build:
+      context: .
+      dockerfile: php/85/Dockerfile
+    container_name: php85
+    restart: unless-stopped
+    ports:
+      - "8085:80"
+    volumes:
+      - ./projects:/var/www/html
+      - ./php/85/index.php:/var/www/html/index.php:ro
+      - ./php/85/php.ini:/usr/local/etc/php/php.ini:ro
+
+# Optional: add shared network or services (db, redis) later when needed
+ 
