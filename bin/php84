@@ -1,0 +1,9 @@
+#!/bin/bash
+
+docker run --rm \
+    --network docker-php-setup-multiversions_dev-network \
+    -p 8000:8000 \
+    -v "$PWD:/var/www" \
+    -w /var/www \
+    local/php:8.4 \
+    php "$@"

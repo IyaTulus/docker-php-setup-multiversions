@@ -1,0 +1,7 @@
+#!/bin/bash
+
+docker run --rm \
+    -v "$PWD:/var/www" \
+    -w /var/www \
+    local/php:8.4 \
+    composer "$@"

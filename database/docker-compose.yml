@@ -1,11 +1,4 @@
 services:
-  php84:
-    build:
-      context: ./php/8.4
-    image: local/php:8.4
-    networks:
-        - dev-network
-  
   mysql:
     image: mysql
     container_name: mysql-global
@@ -19,12 +12,6 @@ services:
 
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - dev-network
 
 volumes:
   mysql_data:
-
-networks:
-  dev-network:
-    driver: bridge
